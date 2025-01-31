@@ -19,12 +19,12 @@ NEWSPIDER_MODULE = "test_project.spiders"
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
 
-# Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 16
+# Configure maximum concurrent requests performed by Scrapy (default: 16) 20
+CONCURRENT_REQUESTS = 16 
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
-# See also autothrottle settings and docs
+# See also autothrottle settings and docs 0.6
 DOWNLOAD_DELAY = 1
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16

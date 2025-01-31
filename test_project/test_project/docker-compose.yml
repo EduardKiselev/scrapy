@@ -22,8 +22,6 @@ services:
       ME_CONFIG_MONGODB_ADMINUSERNAME: admin12
       ME_CONFIG_MONGODB_ADMINPASSWORD: adminpass12
       ME_CONFIG_MONGODB_SERVER: mongodb
-    depends on:
-      - mongodb
 
 volumes:
   mongo_data:
