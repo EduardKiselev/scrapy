@@ -37,7 +37,8 @@ class MerchantpointSpider(scrapy.Spider):
                     'address': address,
                     'org_name': org_name,
                     'org_description': org_description,
-                    'source_url': response.url
+                    'source_url': response.url,
+                    'geo_coordinates': "нет данных"
                 }
                 
                 status = self.db_handler.save_data(cleaned_data)

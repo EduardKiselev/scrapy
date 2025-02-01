@@ -36,10 +36,3 @@ class MongoPipeline:
         self.db[self.mongo_db_collection].insert_one(ItemAdapter(item).asdict())
         return item
     
-class CleanDataPipeline:
-    
-    def process_item(self, item, spider):    
-        for key in item:
-            item[key] = item[key].replace('\n', '').strip()    
-        return item
-    
