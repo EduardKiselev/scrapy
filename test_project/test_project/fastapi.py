@@ -28,8 +28,8 @@ app = FastAPI(title="Book ISBN Search Service", description="Study Case Example"
 
 
 async def get_mongo_db() -> AsyncCollection[Mapping[str, Any] | Any]:
-    mongo_user = getenv("MONGO_USER","admin12")
-    mongo_password = getenv("MONGO_PASSWORD","adminpass12")
+    mongo_user = getenv("MONGO_USER", "admin12")
+    mongo_password = getenv("MONGO_PASSWORD", "adminpass12")
     mongo_port = getenv("MONGO_PORT", 27017)
     mongo_uri = f"mongodb://{mongo_user}:{mongo_password}@localhost:{mongo_port}/"
     mongo_db = getenv("MONGO_DATABASE", "books")

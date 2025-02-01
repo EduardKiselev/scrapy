@@ -1,14 +1,11 @@
-import scrapy
-import time
-import pprint
 from scrapy.spiders import SitemapSpider
 
 
 class ChitaigorodSpider(SitemapSpider):
     name = 'chitaigorod'
-    sitemap_urls = ['https://www.chitai-gorod.ru/sitemap/products'+str(i)+'.xml' for i in range(25,36)]
-    sitemap_follow = ["/products"]
-    #sitemap_urls = ['https://www.chitai-gorod.ru/sitemap/products15.xml']
+    sitemap_urls = [
+        'https://www.chitai-gorod.ru/sitemap/products'+str(i)+'.xml' for i in range(25,36)]
+    # sitemap_follow = ["/products"]
     sitemap_rules = [("", "parse_products"),]
 
     custom_settings = {
@@ -18,11 +15,10 @@ class ChitaigorodSpider(SitemapSpider):
         "MONGO_PASSWORD": "adminpass12",
         "MONGO_DB_COLLECTION": "items",
     }
-    
-    # Обрабатываем каждую страницу, найденную в отфильтрованных sitemap
+
     def parse_products(self, response):
         if response.xpath("//head/meta[@content='book']").get() is None:
-            print("PASS",self.clean_text(response.xpath("//h1 [@itemprop='name']/text()").get()))
+            # print("PASS", self.clean_text(response.xpath("//h1 [@itemprop='name']/text()").get()))
             return
         parsed_data = {}
         data = response
@@ -34,49 +30,39 @@ class ChitaigorodSpider(SitemapSpider):
             parsed_data['isbn'] = isbn.split(',')[0]
         else:
             parsed_data['isbn'] = "отсутствует"
-        parsed_data['book_cover'] = data.xpath("//img [@class='product-info-gallery__poster']/@src").get()
-        parsed_data['pages_cnt'] = self.clean_text(data.xpath("//span [@itemprop='numberOfPages']/text()").get())
-        parsed_data['author'] = self.clean_text(data.xpath("//span [@itemprop='author']/a/meta/@content").get())
-        parsed_data['title'] = self.clean_text(data.xpath("//h1 [@itemprop='name']/text()").get())
+        parsed_data['book_cover'] = data.xpath(
+            "//img [@class='product-info-gallery__poster']/@src").get()
+        parsed_data['pages_cnt'] = self.clean_text(data.xpath(
+            "//span [@itemprop='numberOfPages']/text()").get())
+        parsed_data['author'] = self.clean_text(data.xpath(
+            "//span [@itemprop='author']/a/meta/@content").get())
+        parsed_data['title'] = self.clean_text(data.xpath(
+            "//h1 [@itemprop='name']/text()").get())
+        parsed_data['price_amount'] = data.xpath(
+            "//span [@itemprop='price']/@content").get()
+        parsed_data['rating_value'] = data.xpath(
+            "//span [@class='product-review-range__count']/text()").get()
+        rating_count = self.clean_text(data.xpath(
+            "//div [@itemprop='aggregateRating']/span/text()").get())
         parsed_data['source_url'] = response.url
-        parsed_data['price_amount'] = data.xpath("//span [@itemprop='price']/@content").get()
-        parsed_data['rating_value'] = data.xpath("//span [@class='product-review-range__count']/text()").get()
-        # parsed_data['rating_count'] = self.clean_text(data.xpath("//div [@itemprop='aggregateRating']/span/text()").get())
-        rating_count = self.clean_text(data.xpath("//div [@itemprop='aggregateRating']/span/text()").get())
-        print(rating_count)
+
         if rating_count:
             parsed_data['rating_count'] = rating_count.split()[0]
         price = data.xpath("//span [@itemprop='price']/text()").get()
         if price:
-            parsed_data['price_currency'] = data.xpath("//span [@itemprop='price']/text()").get().split()[-1]
-        print('========================')
+            parsed_data['price_currency'] = data.xpath(
+                "//span [@itemprop='price']/text()").get().split()[-1]
 
         if parsed_data.get('title') and \
             parsed_data.get('publication_year') and\
                 parsed_data.get('isbn') and\
                     parsed_data.get('pages_cnt'):
-            if parsed_data.get('rating_value'):
-                print('YIELD THIS BOOK', parsed_data)
+            # if parsed_data.get('rating_value'):
+            #     print('YIELD THIS BOOK', parsed_data)
             yield parsed_data
         return
         
-
     def clean_text(self, text):
         if text:
             return text.replace('\n', '').strip()
         return text
-
-
-# title Название книги Да ++++++
-# author Автор Нет ++++++
-# description Описание Нет +++++
-# price_amount Цена Нет +++++
-# price_currency Валюта Нет +++++
-# rating_value Средняя цена Нет +++++
-# rating_count Количество оценок Нет
-# publication_year Год публикации Да ++++++
-# isbn ISBN Да   ++++++++
-# pages_cnt Количество страниц Да +++++++
-# publisher Издательство Нет  ++++++++
-# book_cover Обложка книги (ссылка на картинку)Нет +++++
-# source_url Ссылка на источник данных Да  +++++

@@ -16,7 +16,7 @@ class MerchantpointSpider(scrapy.Spider):
         for href in hrefs:
             print("GO TO ", href)
             yield scrapy.Request(url=response.urljoin(href), callback=self.href_to_point)
- 
+
         next_page_href = response.xpath("//*[@id='layout-content']//li/a[contains(text(), 'Вперед')]/@href").get()
         if next_page_href:
             yield scrapy.Request(url=response.urljoin(next_page_href), callback=self.parse)
@@ -40,7 +40,7 @@ class MerchantpointSpider(scrapy.Spider):
                     'source_url': response.url,
                     'geo_coordinates': "нет данных"
                 }
-                
+   
                 status = self.db_handler.save_data(cleaned_data)
                 print(status, cleaned_data['merchant_name'])
                 self.log(f"{status} record: {cleaned_data['merchant_name']} at {cleaned_data['address']}")
