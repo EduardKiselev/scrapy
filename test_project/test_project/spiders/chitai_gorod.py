@@ -1,10 +1,27 @@
 from scrapy.spiders import SitemapSpider
+import scrapy
+
+
+class ParsedData(scrapy.Item):
+    description = scrapy.Field(default=None)
+    publication_year = scrapy.Field()
+    publisher = scrapy.Field(default=None)
+    isbn = scrapy.Field()
+    pages_cnt = scrapy.Field()
+    author = scrapy.Field(default=None)
+    title = scrapy.Field()
+    price_amount = scrapy.Field(default=None)
+    price_currency = scrapy.Field(default=None)
+    rating_value = scrapy.Field(default=None)
+    rating_count = scrapy.Field(default=None)
+    source_url = scrapy.Field()
+    book_cover = scrapy.Field(default=None)
 
 
 class ChitaigorodSpider(SitemapSpider):
     name = 'chitaigorod'
     sitemap_urls = [
-        'https://www.chitai-gorod.ru/sitemap/products'+str(i)+'.xml' for i in range(25,36)]
+        'https://www.chitai-gorod.ru/sitemap/products'+str(i)+'.xml' for i in range(35,36)]
     # sitemap_follow = ["/products"]
     sitemap_rules = [("", "parse_products"),]
 
@@ -20,7 +37,7 @@ class ChitaigorodSpider(SitemapSpider):
         if response.xpath("//head/meta[@content='book']").get() is None:
             # print("PASS", self.clean_text(response.xpath("//h1 [@itemprop='name']/text()").get()))
             return
-        parsed_data = {}
+        parsed_data = ParsedData()
         data = response
         parsed_data['description'] = data.xpath("//div [@itemprop='description']/article/text()").get()
         parsed_data['publication_year'] = self.clean_text(data.xpath("//span [@itemprop='datePublished']/text()").get())
