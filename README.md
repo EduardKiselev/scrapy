@@ -1,3 +1,5 @@
 # scrapy
 
-Использование парсера Scrapy
+Использование парсера Scrapy.
+сайты merchantpoint.ru
+chitai-gorod.ru
